@@ -233,6 +233,9 @@ if __name__ == '__main__':
         ASIN_REVIEWS = pd.DataFrame(FINAL_ASIN_REVIEWS)
         ASIN_CATEGORIES = pd.DataFrame(FINAL_ASIN_CATEGORIES)
         ASIN_REVIEWS_DETAIL = pd.DataFrame(FINAL_ASIN_REVIEWS_DETAIL)
+        #drop dup customers for one item
+        ASIN_REVIEWS_DETAIL = ASIN_REVIEWS_DETAIL.drop_duplicates(subset=["ASIN", "customer"])
+
         ASIN_CATEGORIES_DETAILS = pd.DataFrame(FINAL_ASIN_CATEGORIES_DETAILS)
         #added id-title, id-customerID-rating
         ID_TITLE = pd.merge(ASIN_TITLE_GROUP_SALESRANK, ID_ASIN, on = 'ASIN')
