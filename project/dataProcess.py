@@ -233,12 +233,31 @@ if __name__ == '__main__':
         ASIN_REVIEWS = pd.DataFrame(FINAL_ASIN_REVIEWS)
         ASIN_CATEGORIES = pd.DataFrame(FINAL_ASIN_CATEGORIES)
         ASIN_REVIEWS_DETAIL = pd.DataFrame(FINAL_ASIN_REVIEWS_DETAIL)
+        #drop dup customers for one item
+        ASIN_REVIEWS_DETAIL = ASIN_REVIEWS_DETAIL.drop_duplicates(subset=["ASIN", "customer"])
+
         ASIN_CATEGORIES_DETAILS = pd.DataFrame(FINAL_ASIN_CATEGORIES_DETAILS)
-        ASIN_TITLE = pd.DataFrame(FINAL_ASIN_TITLE_GROUP_SALESRANK)
-        ASIN_TITLE = ASIN_TITLE[["ASIN", "title"]]
+        #added id-title, id-customerID-rating
+        ID_TITLE = pd.merge(ASIN_TITLE_GROUP_SALESRANK, ID_ASIN, on = 'ASIN')
+        ID_TITLE = ID_TITLE[["Id", "title"]]
+        ID_CUSTOMERID_RATING = pd.merge(ASIN_REVIEWS_DETAIL, ID_ASIN, on = 'ASIN')
+        ID_CUSTOMERID_RATING = ID_CUSTOMERID_RATING[["customer", "Id", "ratings", "ASIN"]]
+        USERID_CUSTOMER = pd.DataFrame(ASIN_REVIEWS_DETAIL)
+        #do for user ID which start at 1 2 3 ...
+        USERID_CUSTOMER = USERID_CUSTOMER[["customer"]]
+        UD_CUSTOMER = USERID_CUSTOMER.drop_duplicates()
+        FINAL_UD = pd.DataFrame(UD_CUSTOMER)
+        # print("row count: ", FINAL_UD.shape[0])
+        # print("row count1: ", len(FINAL_UD.index))
+        ll = []
+        for x in range(1555170):
+            ll.append(x)
+        FINAL_UD["userID"] = ll[0:1555170]
+        ID_USERID_RATING = pd.merge(FINAL_UD, ID_CUSTOMERID_RATING, on = 'customer')
+        ID_USERID_RATING = ID_USERID_RATING[["userID", "Id", "ratings"]]
         ASIN_CUSTOMERID_TITLE = pd.merge(ASIN_REVIEWS_DETAIL, ASIN_TITLE_GROUP_SALESRANK, on = 'ASIN')
         ASIN_CUSTOMERID_TITLE = ASIN_CUSTOMERID_TITLE[["ASIN", "customer", "ratings", "title"]]
-
+        ASIN_CUSTOMERID_TITLE = ASIN_CUSTOMERID_TITLE.drop_duplicates(subset=["ASIN", "customer"])
 
         ID_ASIN.to_csv("FINAL-ID-ASIN.csv")
         ASIN_TITLE_GROUP_SALESRANK.to_csv("FINAL-ASIN-TITLE-GROUP-SALESRANK.csv")
@@ -247,5 +266,8 @@ if __name__ == '__main__':
         ASIN_CATEGORIES.to_csv("ASIN-CATEGORIES.csv")
         ASIN_CATEGORIES_DETAILS.to_csv("FINAL-ASIN-CATEGORIES-DETAILS.csv")
         ASIN_REVIEWS_DETAIL.to_csv("FINAL-ASIN-REVIEWS-DETAIL.csv")
-        ASIN_TITLE.to_csv("ASIN_TITLE.csv")
+        ID_TITLE.to_csv("ID_TITLE.csv")
+        ID_CUSTOMERID_RATING.to_csv("ID_CUSTOMERID_RATING.csv")
+        FINAL_UD.to_csv("USERID_CUSTOMER.csv")
+        ID_USERID_RATING.to_csv("ID_USERID_RATING.csv")
         ASIN_CUSTOMERID_TITLE.to_csv("ASIN_CUSTOMERID_TITLE.csv")
